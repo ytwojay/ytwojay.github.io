@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Zizo and the Math Monsters</title>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/underscore-min.js"></script>
+	<script src="js/jquery.cookie.js"></script>
+	<!--<script src="js/phaser_.min.js"></script>
+	<script src="js/phaser.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/phaser/2.0.3/phaser.min.js"></script>-->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/phaser/1.1.5/phaser.min.js"></script>
+	<script src="js/get_math_problem.js"></script>
+	<script src="Boot.js"></script>
+	<script src="Preloader.js"></script>
+	<script src="TitleScreen.js"></script>
+	<script src="MainMenu.js"></script>
+	<script src="StoryScenes.js"></script>
+	<script src="HorseGame.js"></script>
+	<script src="Race.js"></script>
+	<script src="PlatformGame.js"></script>
+	<script src="SideScrollerGame.js"></script>
+	<script src="CollectGame.js"></script>
+	<script src="BossGame.js"></script>
+	<script src="Credits.js"></script>
+	
+	<link href='css/jquery-ui.min.css' rel='stylesheet' type='text/css'>
+	<!--<link href='http://fonts.googleapis.com/css?family=Galindo|Montserrat+Alternates|Orbitron:500|Righteous' rel='stylesheet' type='text/css'>-->
+	
+	<style>
+		@font-face {
+			font-family: kenvector_future;
+			src: url(assets/ui/kenvector_future.ttf);
+		}
+		
+		body {
+			font-family: kenvector_future;
+			margin: 0;
+			padding: 0;
+			background: #000;
+		}
+		
+		#pause_menu {
+			font-family: kenvector_future;
+		}
+		
+		#pause_menu_title {
+			text-align: center;
+		}
+		
+		#pause_menu_options {
+			width: 100%;
+			margin: 0 auto;
+			padding: 0;
+		}
+		
+		#pause_menu_options li {
+			list-style-type: none;
+			margin: 5px auto;
+			font-size: 12pt;
+			line-height: 49px;
+			text-align: center;
+			width: 190px;
+			height: 49px;
+			background-image: url('assets/ui/yellow_button00.png');
+		}
+	</style>
+</head>
+<body>
+
+<script type="text/javascript">
+$(document).ready(function(){	
+	// Game stuff
+	var game = new Phaser.Game(1280, 720, Phaser.AUTO);
+
+	//	Game states
+	game.state.add('Boot', BasicGame.Boot);
+	game.state.add('Preloader', BasicGame.Preloader);
+	game.state.add('TitleScreen', BasicGame.TitleScreen);
+	game.state.add('MainMenu', BasicGame.MainMenu);
+	game.state.add('StoryOpen', BasicGame.StoryOpen);
+	game.state.add('StoryScene1', BasicGame.StoryScene1);
+	game.state.add('StoryScene2', BasicGame.StoryScene2);
+	game.state.add('StoryScene3', BasicGame.StoryScene3);
+	game.state.add('StoryScene4', BasicGame.StoryScene4);
+	game.state.add('HorseGame', BasicGame.HorseGame);
+	game.state.add('Race', BasicGame.Race);
+	game.state.add('PlatformGame', BasicGame.PlatformGame);
+	game.state.add('SideScrollerGame', BasicGame.SideScrollerGame);
+	game.state.add('CollectGame', BasicGame.CollectGame);
+	game.state.add('BossGame', BasicGame.BossGame);
+	game.state.add('Credits', BasicGame.Credits);
+
+	//	Now start the Boot state.
+	game.state.start('Boot');
+	
+	// Global variables
+	game.global_vars = {
+		'player_overall_score': 0,
+		'story_mode': false,
+		'games_unlocked': 0,
+		'load_saved_state': false,
+		'saved_state': '',
+		'saved_level': 0,
+		'num_levels': 1,
+		// diff_score will determine difficulty
+		'diff_score': 1,
+		'restarted': false,
+		'askAddition': 0,
+		'askAddthree': 0,
+		'askSubtraction': 0,
+		'askSubthree': 0,
+		'askZero': 0,
+		'ansAddition': 0,
+		'ansAddthree': 0,
+		'ansSubtraction': 0,
+		'ansSubthree': 0,
+		'ansZero': 0,
+		'ansEasy': 0,
+		'ansMedium': 0,
+		'ansHard': 0
+	};
+	
+	// Story mode state order
+	game.story_mode_state_order = [
+		// edited order 10/17 to test question type
+		//'StoryOpen',
+		//'HorseGame',
+		//'Race',
+		//'StoryScene2',
+		//'SideScrollerGame',
+		//'StoryScene3',
+		'CollectGame',
+		//'BossGame',
+		//'StoryScene4',
+		'Credits'
+	];
+	
+	// Global functions
+	game.saveGame = function(state, level) {
+		console.log('Saving game!');
+		
+		this.global_vars.saved_state = state;
+		this.global_vars.saved_level = level;
+		$.cookie('saved_state', state);
+		$.cookie('saved_level', level);
+	};
+	
+	game.deleteSavedState = function() {
+		// Delete saved game
+		$.cookie('saved_state', '');
+		$.cookie('saved_level', '1');
+		this.global_vars.saved_state = '';
+		this.global_vars.saved_level = 1;	
+	};
+	
+	game.goToNextState = function() {
+		// Find next state in the list
+		var cur_index = _.indexOf(this.game.story_mode_state_order, this.state_label);
+		var next_state = this.game.story_mode_state_order[cur_index + 1];
+		
+		// Save progress
+		this.game.saveGame(next_state, 1);
+		
+		// Move on to next state
+		this.game.state.start(next_state);
+	};
+	
+	game.unlockMiniGame = function(game_state_label) {
+		$.cookie(game_state_label, 'true');
+	};
+	
+	game.getMathProblem = function(type, difficulty) {
+		//var difficulty = 'medium';
+		return getMathProblem(type, difficulty);
+	}
+	
+	game.randomIntFromInterval = function(min, max) {
+		return randomIntFromInterval(min, max);
+	}
+	
+	game.createAnswerButtons = function() {		
+		// Answer button group
+		var answer_button_group = this.game.add.group();
+		for (var i = 0; i < 20; i++) {
+			// Determine button position
+			if (i < 10) {
+				answer_button_x = 0;
+				answer_button_y = i * 72;
+			} else {
+				answer_button_x = this.game.world.width - 73;
+				answer_button_y = (i - 10) * 72;
+			}
+			
+			value = i + 1;
+			var answer_button = this.game.add.button(answer_button_x, answer_button_y, 'answer_button_bg', this.game.answer_buttons[value], this, 0, 0, 1);
+			// var answer_button = this.game.add.button(answer_button_x, answer_button_y, 'buttons', this.game.answer_buttons[value], this, 14, 14, 15);
+			//answer_button.anchor.setTo(0, 1);
+			answer_button.value = value;
+			
+			var answer_button_text = this.game.add.text(40, 36, value, {font: '36px kenvector_future', fill: '#fff', align: 'center'});
+			answer_button_text.anchor.setTo(0.5, 0.5);
+			answer_button.addChild(answer_button_text);
+			answer_button.fixedToCamera = true;
+			
+			answer_button_group.add(answer_button);
+		}
+		
+		return answer_button_group;
+	};
+	
+	// Answer input button layer to be used throughout all mini games
+	game.answer_buttons = {};
+	game.answer_buttons[1] = function () {
+		this.checkAnswer(1);
+	};
+	game.answer_buttons[2] = function () {
+		this.checkAnswer(2);
+	};
+	game.answer_buttons[3] = function () {
+		this.checkAnswer(3);
+	};
+	game.answer_buttons[4] = function () {
+		this.checkAnswer(4);
+	};
+	game.answer_buttons[5] = function () {
+		this.checkAnswer(5);
+	};
+	game.answer_buttons[6] = function () {
+		this.checkAnswer(6);
+	};
+	game.answer_buttons[7] = function () {
+		this.checkAnswer(7);
+	};
+	game.answer_buttons[8] = function () {
+		this.checkAnswer(8);
+	};
+	game.answer_buttons[9] = function () {
+		this.checkAnswer(9);
+	};
+	game.answer_buttons[10] = function () {
+		this.checkAnswer(10);
+	};
+	game.answer_buttons[11] = function () {
+		this.checkAnswer(11);
+	};
+	game.answer_buttons[12] = function () {
+		this.checkAnswer(12);
+	};
+	game.answer_buttons[13] = function () {
+		this.checkAnswer(13);
+	};
+	game.answer_buttons[14] = function () {
+		this.checkAnswer(14);
+	};
+	game.answer_buttons[15] = function () {
+		this.checkAnswer(15);
+	};
+	game.answer_buttons[16] = function () {
+		this.checkAnswer(16);
+	};
+	game.answer_buttons[17] = function () {
+		this.checkAnswer(17);
+	};
+	game.answer_buttons[18] = function () {
+		this.checkAnswer(18);
+	};
+	game.answer_buttons[19] = function () {
+		this.checkAnswer(19);
+	};
+	game.answer_buttons[20] = function () {
+		this.checkAnswer(20);
+	};
+	
+	// Pause menu stuff
+	game.pause = function() {
+		this.pause();
+		this.game.state.pause();
+		$('canvas').hide();
+		$('#pause_menu').dialog('open');
+	};
+	
+	game.unpause = function() {
+		game.state.states[game.state.current].unpause();
+		$('canvas').show();
+		this.paused = false;
+	};
+	
+	game.restartLevel = function() {
+		game.state.start(game.state.current);
+	};
+	
+	$('#pause_menu').dialog({
+		autoOpen: false,
+		height: 170,
+		width: 250,
+		modal: true,
+		closeOnEscape: false
+	});
+	
+	$('.ui-dialog-titlebar').hide();
+	
+	$('#pause_menu').click(function(){
+		game.unpause();
+	});
+	
+	$('#resume_game').click(function(){
+		$('#pause_menu').dialog('close');
+		game.unpause();
+	});
+	
+	$('#restart_level').click(function(){
+		$('#pause_menu').dialog('close');
+		game.restartLevel();
+	});
+	
+	$('#main_menu').click(function(){
+		$('#pause_menu').dialog('close');
+		game.state.start('MainMenu');
+	});
+});
+
+</script>
+
+<div id="pause_menu">
+	<div id="pause_menu_title">
+		Pause Menu
+	</div>
+	
+	<ul id="pause_menu_options">
+		<li id="resume_game">Resume Game</li>
+		<!--<li id="restart_level">Restart Level</li>-->
+		<li id="main_menu">Main Menu</li>
+	</ul>
+</div>
+
+</body>
+</html>
