@@ -437,7 +437,7 @@ BasicGame.CollectGame.prototype = {
 		}
 		
 		this.difficulty_text.destroy();
-		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score, {font: '20px kenvector_future', fill: '#fff'});		
+		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score + ' ' + this.diff_level, {font: '20px kenvector_future', fill: '#fff'});		
 		this.score_text.setText(this.score);
 		this.displayNewProblem();
 	},

@@ -301,7 +301,7 @@ BasicGame.BossGame.prototype = {
 		this.background = this.game.add.sprite(0, 0, this.level_images[this.current_level]['background']);
 		this.background_layer.add(this.background);
 		//this.level_text = this.game.add.text(80, 10, 'Boss Level', {font: '20px kenvector_future', fill: '#fff'});
-		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score, {font: '20px kenvector_future', fill: '#fff'});
+		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score + ' ' + this.diff_level, {font: '20px kenvector_future', fill: '#fff'});
 
 		// Reset characters
 		this.reset();
@@ -607,7 +607,7 @@ BasicGame.BossGame.prototype = {
 			this.diff_level = 'medium';
 		}
 		this.difficulty_text.destroy();
-		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score, {font: '20px kenvector_future', fill: '#fff'});
+		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score + ' ' + this.diff_level, {font: '20px kenvector_future', fill: '#fff'});
 		
 		console.log('askAddition: ' + this.game.global_vars.askAddition + ' Answered: ' + this.game.global_vars.ansAddition);
 		console.log('askSubtraction: ' + this.game.global_vars.askSubtraction + ' Answered: ' + this.game.global_vars.ansSubtraction);
