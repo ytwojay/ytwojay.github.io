@@ -16,7 +16,7 @@ BasicGame.MainMenu.prototype = {
 		this.game.add.sprite(0, 0, 'main_menu_bg');
 		
 		// Mini game buttons
-		if ($.cookie('HorseGame') == 'true') {
+		/*if ($.cookie('HorseGame') == 'true') {
 			this.game.add.button(0 * (254 + 100) + 159, 195, 'race_button', this.startRaceGame, this);
 		} else {
 			this.game.add.sprite(0 * (254 + 100) + 159, 195, 'race_button_locked');
@@ -39,11 +39,12 @@ BasicGame.MainMenu.prototype = {
 			load_game_button = this.game.add.button(288, 545, 'resume_button', this.loadSavedState, this);
 		} else {
 			this.game.add.sprite(288, 545, 'resume_button_locked');
-		}
+		}*/
 		
 		// Start story mode
-		story_mode_button = this.game.add.button(this.game.width - 590, 545, 'story_button', this.startStoryMode, this);
-		this.game.global_vars.story_mode = false;
+		this.game.add.button(275, 300, 'story_button', this.startStoryMode, this);
+		this.game.add.button(700, 300, 'credits_button', this.startCredits, this);
+		//this.game.global_vars.story_mode = false;
 	},
 	
 	update: function() {
@@ -70,6 +71,11 @@ BasicGame.MainMenu.prototype = {
 		
 		this.game.global_vars.story_mode = true;
 		this.game.state.start(this.game.story_mode_state_order[0]);
+	},
+	
+	startCredits: function() {
+		this.music.stop();
+		this.game.state.start('Credits');
 	},
 	
 	loadSavedState: function() {

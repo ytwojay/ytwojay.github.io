@@ -273,6 +273,187 @@ BasicGame.StoryScene2.prototype = {
 				this.part_sprites.add(this.narrator('With his new flying car,\n\t\tzizo is able to fly to\n\t\t\t\t\t\tmath mountain'));
 				this.playLine('story_Ncar');
 			},
+			/*function() {
+				this.add_sprite(0, 0, 'cutscene_2_outside');
+				
+				var umbrella = this.add_sprite(795, 470, 'umbrella', false);
+				umbrella.anchor.setTo(0.5, 0);
+				umbrella.scale.x = -1;
+				
+				var zizocar = this.add_sprite(0, 400, 'zizocar');
+				var movecar = this.game.add.tween(zizocar).to({x: 200}, 1000, null, false);
+				movecar.onComplete.add(this.playNextPart, this);
+				movecar.start();
+			},
+			function(){
+				this.add_sprite(0, 0, 'cutscene_2_outside');
+				this.add_sprite(200, 400, 'zizocar');
+				var umbrella = this.add_sprite(795, 470, 'umbrella', false);
+				umbrella.anchor.setTo(0.5, 0);
+				umbrella.scale.x = -1;
+				this.add_sprite(330, 230, 'cutscene_2_zfinally');
+				this.playLine('story_Zfinally');
+			},
+			function() {		
+				this.add_sprite(0, 0, 'cutscene_2_inside');
+				this.add_sprite(640, 170, 'cutscene_2_kmonce');
+				this.playLine('story_KMonce');
+			},
+			function() {
+				this.add_sprite(0, 0, 'cutscene_2_inside');
+				this.add_sprite(780, 120, 'cutscene_2_ano');
+				this.playLine('story_Ano');
+			},
+			function() {		
+				this.add_sprite(0, 0, 'cutscene_2_outside', true);
+				this.add_sprite(200, 400, 'justcar', true);
+				
+				this.umbrella = this.add_sprite(795, 470, 'umbrella', true);
+				this.umbrella.anchor.setTo(0.5, 0);
+				this.umbrella.scale.x = -1;
+				
+				this.zizo = this.add_sprite(300, 430, 'zizo', true);
+				this.zizo.animations.add('stand', [6], 1, false);
+				this.zizo.play('stand');
+				
+				this.add_sprite(340, 270, 'cutscene_2_zalmost');
+				this.playLine('story_Zalmost');
+			},
+			function() {
+				this.zizo.animations.add('walk', [9, 10], 2, true);
+				this.zizo.play('walk');
+				this.zizo.body.velocity.x = 150;
+			},
+			function() {		
+				this.collided = true;
+				this.zizo.body.velocity.x = 0;
+				this.zizo.play('stand');
+				this.add_sprite(400, 270, 'cutscene_2_zumbrella');
+				this.umbrella.angle = 180;
+				this.umbrella.x = 75;
+				this.umbrella.y = 70;
+				this.zizo.addChild(this.umbrella);
+				this.playLine('story_Zumbrella');
+			},
+			function(){
+				this.zizo.play('walk');
+				var move = this.game.add.tween(this.zizo).to({x: this.zizo.x + 200}, 2000, null, false);
+				move.onComplete.add(this.playNextPart, this);
+				move.start();
+			},*/
+			function(){
+				var black = this.add_sprite(0, 0, 'black_screen');
+				black.alpha = 0;
+				var fade_black = this.game.add.tween(black).to({alpha: 1}, 1000, Phaser.Easing.Exponential.out, false);
+				fade_black.onComplete.add(this.playNextPart, this);
+				fade_black.start();
+			}
+		];
+	},
+	
+	update: function() {
+		if (this.collided || this.zizo == null || this.umbrella == null) {
+			return;
+		}
+		
+		this.game.physics.overlap(this.zizo, this.umbrella, this.playNextPart, null, this);
+	},
+	
+	add_sprite: function(x, y, key, persistent) {
+		persistent = typeof persistent !== 'undefined' ? persistent : false;
+		
+		if (persistent) {
+			return this.persistent_sprites.add(this.game.add.sprite(x, y, key));
+		} else {
+			return this.part_sprites.add(this.game.add.sprite(x, y, key));
+		}
+	},
+	
+	next: function() {
+		this.game.input.onDown.add(this.playNextPart, this);
+	},
+	
+	playNextPart: function() {
+		this.removeSprites();
+		this.current_part++;
+		
+		if (this.current_part >= this.parts.length) {
+			console.log('here');
+			this.game.goToNextState.call(this);
+		} else {		
+			console.log(this.current_part + ' ' + this.parts.length);
+			this.parts[this.current_part].call(this);
+		}
+	},
+	
+	removeSprites: function() {
+		this.part_sprites.destroy();
+		this.part_sprites = this.game.add.group();
+	},
+	
+	playNextLine: function() {
+		this.current_line = this.lines[this.current_line_index];
+		this.current_line.play();
+		this.current_line_index++;
+	}
+};
+
+BasicGame.StoryScene2point = function (game) {
+	this.state_label = 'StoryScene2point';
+	this.lines = [];
+	this.current_line_index = 0;
+	this.current_line = null;
+	this.zizo = null;
+	this.zizocar = null;
+	this.tree = null;
+	this.umbrella = null;
+	this.kma = null;
+	this.bubble = null;
+	this.part_sprites = null;
+	this.parts = [];
+	this.current_part = 0;
+};
+
+BasicGame.StoryScene2point.prototype = {
+	preload: function() {
+	},
+	
+	create: function() {
+		this.persistent_sprites = this.game.add.group();
+		this.persistent_sprites.z = 0;
+		this.part_sprites = this.game.add.group();
+		this.part_sprites.z = 0;
+		
+		this.zizo = null;
+		this.umbrella = null;
+		this.parts = this.createParts();
+		this.collided = false;
+		// this.current_part=4;
+		this.playNextPart();
+		// this.next();
+	},
+	
+	narrator: function(string) {
+		return this.game.add.text(50, 50, string, text_style);
+	},
+	
+	playLine: function(key) {
+		this.current_line = this.game.add.audio(key);
+		this.current_line.onStop.add(this.playNextPart, this);
+		this.current_line.play();
+	},
+	
+	createParts: function() {
+		return [
+			'',
+			/*function() {		
+				this.add_sprite(0, 0, 'cutscene_opener_bg');
+				this.add_sprite(1000, 265, 'cutscene_opener_big_tree');
+				var zizocar = this.add_sprite(0, 350, 'zizocar');
+				zizocar.body.velocity.x = 200;
+				this.part_sprites.add(this.narrator('With his new flying car,\n\t\tzizo is able to fly to\n\t\t\t\t\t\tmath mountain'));
+				this.playLine('story_Ncar');
+			},*/
 			function() {
 				this.add_sprite(0, 0, 'cutscene_2_outside');
 				

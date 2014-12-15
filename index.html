@@ -24,6 +24,7 @@
 	<script src="CollectGame.js"></script>
 	<script src="BossGame.js"></script>
 	<script src="Credits.js"></script>
+	<script src="Statistics.js"></script>
 	
 	<link href='css/jquery-ui.min.css' rel='stylesheet' type='text/css'>
 	<!--<link href='http://fonts.googleapis.com/css?family=Galindo|Montserrat+Alternates|Orbitron:500|Righteous' rel='stylesheet' type='text/css'>-->
@@ -82,6 +83,7 @@ $(document).ready(function(){
 	game.state.add('StoryOpen', BasicGame.StoryOpen);
 	game.state.add('StoryScene1', BasicGame.StoryScene1);
 	game.state.add('StoryScene2', BasicGame.StoryScene2);
+	game.state.add('StoryScene2point', BasicGame.StoryScene2point);
 	game.state.add('StoryScene3', BasicGame.StoryScene3);
 	game.state.add('StoryScene4', BasicGame.StoryScene4);
 	game.state.add('HorseGame', BasicGame.HorseGame);
@@ -91,6 +93,7 @@ $(document).ready(function(){
 	game.state.add('CollectGame', BasicGame.CollectGame);
 	game.state.add('BossGame', BasicGame.BossGame);
 	game.state.add('Credits', BasicGame.Credits);
+	game.state.add('Statistics', BasicGame.Statistics);
 
 	//	Now start the Boot state.
 	game.state.start('Boot');
@@ -101,22 +104,38 @@ $(document).ready(function(){
 		'story_mode': false,
 		'games_unlocked': 0,
 		'load_saved_state': false,
+		'showStatsBool': false,
 		'saved_state': '',
 		'saved_level': 0,
 		'num_levels': 1,
+		'text2': '',
 		// diff_score will determine difficulty
 		'diff_score': 1,
 		'restarted': false,
 		'askAddition': 0,
 		'askAddthree': 0,
+		'askAddmiddle': 0,
 		'askSubtraction': 0,
 		'askSubthree': 0,
+		'askSubmiddle': 0,
+		'askGreater': 0,
+		'askLess': 0,
+		'askPlus': 0,
+		'askMinus': 0,
 		'askZero': 0,
+		'askTen': 0,
 		'ansAddition': 0,
 		'ansAddthree': 0,
+		'ansAddmiddle': 0,
 		'ansSubtraction': 0,
 		'ansSubthree': 0,
+		'ansSubmiddle': 0,
+		'ansGreater': 0,
+		'ansLess': 0,
+		'ansPlus': 0,
+		'ansMinus': 0,
 		'ansZero': 0,
+		'ansTen': 0,
 		'ansEasy': 0,
 		'ansMedium': 0,
 		'ansHard': 0
@@ -129,11 +148,12 @@ $(document).ready(function(){
 		//'HorseGame',
 		//'Race',
 		//'StoryScene2',
+		//'CollectGame',
+		//'StoryScene2point',
 		//'SideScrollerGame',
 		//'StoryScene3',
-		'CollectGame',
-		//'BossGame',
-		//'StoryScene4',
+		'BossGame',
+		'StoryScene4',
 		'Credits'
 	];
 	

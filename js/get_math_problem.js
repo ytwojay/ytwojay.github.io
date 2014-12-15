@@ -21,8 +21,8 @@ function getMathProblem(type, difficulty) {
 	//console.log(difficulty);
 	var min = 0;
 	var max = 10;
-			var first_num = randomIntFromInterval(1, max);
-			var second_num = randomIntFromInterval(min, max);
+	var first_num = randomIntFromInterval(1, max);
+	var second_num = randomIntFromInterval(min, max);
 	var third_num = 20;
 	//var solution = 0;
 	//var solution = first_num + second_num;
@@ -31,9 +31,16 @@ function getMathProblem(type, difficulty) {
 	var answer = 0;
 	var cAddition = false;
 	var cAddthree = false;
+	var cAddmiddle = false;
 	var cSubtraction = false;
 	var cSubthree = false;
+	var cSubmiddle = false;
+	var cLess = false;
+	var cGreater = false;
+	var cPlus = false;
+	var cMinus = false;
 	var cZero = false;
+	var cTen = false;
 			
 	if (type == 'addSolution') {
 		operator = '+';
@@ -48,8 +55,11 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ' + second_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero, 'cTen': cTen};
 		} else if (difficulty == 'medium') {
 			while((answer < 11) || (answer > 20)){ // Answer is 11~20, num1 and num2 are 1~10
 					first_num = randomIntFromInterval(1, max);
@@ -59,8 +69,11 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ' + second_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero, 'cTen': cTen};
 		} else if (difficulty == 'hard') { // Add 3 numbers, total is 3~15 
 			answer = first_num + second_num + third_num;
 			while(answer > 15){
@@ -72,9 +85,12 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10) || (third_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			cAddthree = true;
 			problem = first_num + ' ' + operator + ' ' + second_num + ' ' + operator + ' ' + third_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cAddthree': cAddthree, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cAddthree': cAddthree, 'cZero': cZero, 'cTen': cTen};
 		} else {
 			console.log('getMathProblem() -- invalid difficulty');
 			return false;
@@ -85,6 +101,9 @@ function getMathProblem(type, difficulty) {
 		cSubtraction = true;
 		answer = first_num - second_num;
 		if (difficulty == 'easy') { // num1 - num2, num1 is 1~10, num2 is 0~9
+			first_num = randomIntFromInterval(1, 10);
+			second_num = randomIntFromInterval(0, 9);
+			answer = first_num - second_num;
 			while(answer < 1) {
 				first_num = randomIntFromInterval(1, 10);
 				second_num = randomIntFromInterval(0, 9);
@@ -93,8 +112,11 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if (first_num == 10) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ' + second_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cZero': cZero, 'cTen': cTen};
 		} else if (difficulty == 'medium') { // num1 - num2, num1 is 11~20, num2 is 0~20
 			first_num = randomIntFromInterval(11, 20);
 			second_num = randomIntFromInterval(0, 20);
@@ -107,8 +129,11 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if (second_num == 10) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ' + second_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cZero': cZero, 'cTen': cTen};
 		} else if (difficulty == 'hard') { // num1 - num2 - num3, num1 is 0~15 (not 20 because the problems get too difficult), num2 is 0~10, and num3 is 0~5
 			first_num = randomIntFromInterval(0, 15);
 			second_num = randomIntFromInterval(0, 10);
@@ -123,9 +148,12 @@ function getMathProblem(type, difficulty) {
 			if ((second_num == 0) || (third_num == 0)){
 				cZero = true;
 			}
+			if ((second_num == 10) || (first_num == 10)){
+				cTen = true;
+			}
 			cSubthree = true;
 			problem = first_num + ' ' + operator + ' ' + second_num + ' ' + operator + ' ' + third_num;
-			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubthree': cSubthree, 'cZero': cZero};
+			return {'text': problem + ' = ?', 'answer': answer, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubthree': cSubthree, 'cZero': cZero, 'cTen': cTen};
 		} else {
 			console.log('getMathProblem() -- invalid difficulty');
 			return false;
@@ -135,6 +163,7 @@ function getMathProblem(type, difficulty) {
 	if (type == 'addMiddle') {
 		operator = '+';
 		cAddition = true;
+		cAddmiddle = true;
 		//answer = first_num + second_num;
 		if (difficulty == 'easy') { // Answer is 1~12, num1 and num2 are 1~10
 			while((answer < 1) || (answer > 12)){
@@ -145,8 +174,11 @@ function getMathProblem(type, difficulty) {
 			if (first_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ? = ' + answer;
-			return {'text': problem , 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero};
+			return {'text': problem , 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero, 'cAddmiddle': cAddmiddle, 'cTen': cTen};
 		} else if (difficulty == 'medium') {
 			while((answer < 11) || (answer > 20)){ // Answer is 11~20, num1 and num2 are 1~10
 					first_num = randomIntFromInterval(0, 12);
@@ -156,8 +188,11 @@ function getMathProblem(type, difficulty) {
 			if (first_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' ' + operator + ' ? = ' + answer;
-			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero};
+			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cZero': cZero, 'cAddmiddle': cAddmiddle, 'cTen': cTen};
 		} else if (difficulty == 'hard') { // Add 3 numbers, total is 3~15 
 			while((answer > 14) || (answer < 3)){
 					first_num = randomIntFromInterval(1, 10);
@@ -168,9 +203,12 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0) {
 				cZero = true;
 			}
+			if ((first_num == 10) || (second_num == 10) || (third_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			cAddthree = true;
 			problem = first_num + ' + ' + second_num + ' + ? = ' + answer;
-			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cAddthree': cAddthree, 'cZero': cZero};
+			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cAddition': cAddition, 'cAddthree': cAddthree, 'cZero': cZero, 'cAddmiddle': cAddmiddle, 'cTen': cTen};
 		} else {
 			console.log('getMathProblem() -- invalid difficulty');
 			return false;
@@ -180,14 +218,18 @@ function getMathProblem(type, difficulty) {
 	if (type == 'subMiddle') {
 		operator = '-';
 		cSubtraction = true;
+		cSubmiddle = true;
 		if (difficulty == 'easy') { // num1 - num2, num1 is 1~10, num2 is 0~9
 			while(answer < 1) {
 				first_num = randomIntFromInterval(1, 10);
 				second_num = randomIntFromInterval(1, 9);
 				answer = first_num - second_num;
 			}
+			if ((first_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' - ? = ' + answer;
-			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction};
+			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubmiddle': cSubmiddle, 'cTen': cTen};
 		} else if (difficulty == 'medium') { // num1 - num2, num1 is 11~20, num2 is 0~20
 			first_num = randomIntFromInterval(8, 16);
 			second_num = randomIntFromInterval(1, 11);
@@ -197,8 +239,11 @@ function getMathProblem(type, difficulty) {
 				second_num = randomIntFromInterval(1, 11);
 				answer = first_num - second_num;
 			}
+			if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			problem = first_num + ' - ? = '+ answer;
-			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction};
+			return {'text': problem, 'answer': second_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubmiddle': cSubmiddle, 'cTen': cTen};
 		} else if (difficulty == 'hard') { // num1 - num2 - num3, num1 is 0~15 (not 20 because the problems get too difficult), num2 is 0~10, and num3 is 0~5
 			first_num = randomIntFromInterval(4, 14);
 			second_num = randomIntFromInterval(0, 5);
@@ -213,9 +258,12 @@ function getMathProblem(type, difficulty) {
 			if (second_num == 0){
 				cZero = true;
 			}
+			if ((first_num == 10) || (answer == 10)) {
+				cTen = true;
+			}
 			cSubthree = true;
 			problem = first_num + ' - ' + second_num + ' - ? = ' + answer;
-			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubthree': cSubthree, 'cZero': cZero};
+			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cSubtraction': cSubtraction, 'cSubthree': cSubthree, 'cZero': cZero, 'cSubmiddle': cSubmiddle, 'cTen': cTen};
 		} else {
 			console.log('getMathProblem() -- invalid difficulty');
 			return false;
@@ -232,11 +280,19 @@ function getMathProblem(type, difficulty) {
 			}
 			if (first_num < second_num) {
 				operator = '<';
+				cLess = true;
 			} else {
 				operator = '>';
+				cGreater = true;
+			}
+			if ((first_num == 0) || (second_num == 0)) {
+				cZero = true;
+			}
+			if ((first_num == 10) || (second_num == 10)) {	
+				cTen = true;
 			}
 			problem = first_num + ' ? ' + second_num;
-			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator};
+			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cLess': cLess, 'cGreater': cGreater, 'cTen': cTen, 'cZero': cZero};
 		}
 		
 		if (difficulty == 'medium') { 			
@@ -248,11 +304,19 @@ function getMathProblem(type, difficulty) {
 			}
 			if (first_num < second_num) {
 				operator = '<';
+				cLess = true;
 			} else {
 				operator = '>';
+				cGreater = true;
+			}
+			if ((first_num == 0) || (second_num == 0)) {
+				cZero = true;
+			}
+			if ((first_num == 10) || (second_num == 10)) {
+				cTen = true;
 			}
 			problem = first_num + ' ? ' + second_num;
-			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator};
+			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cLess': cLess, 'cGreater': cGreater, 'cTen': cTen, 'cZero': cZero};
 		}
 		
 		if (difficulty == 'hard') { 			
@@ -264,11 +328,13 @@ function getMathProblem(type, difficulty) {
 			}
 			if (first_num < second_num) {
 				operator = '<';
+				cLess = true;
 			} else {
 				operator = '>';
+				cGreater = true;
 			}
 			problem = first_num + ' ? ' + second_num;
-			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator};
+			return {'text': problem, 'answer': third_num, 'first_num': first_num, 'second_num': second_num, 'operator': operator, 'cLess': cLess, 'cGreater': cGreater};
 		}
 		
 		
@@ -303,9 +369,101 @@ function getMathProblem(type, difficulty) {
 	if (type == 'mix') {
 		var random_operator = randomIntFromInterval(1, 2);
 		if (random_operator == 1) {
-			type = 'add';
+			operator = '+';
+			cPlus = true;
+			if (difficulty == 'easy') {
+				var first_num = randomIntFromInterval(1, 10);
+				var second_num = randomIntFromInterval(1, 10);
+				answer = first_num + second_num;
+				while (answer > 12) {
+					first_num = randomIntFromInterval(1, 10);
+					second_num = randomIntFromInterval(1, 10);
+					answer = first_num + second_num;
+				}
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			if (difficulty == 'medium') {
+				var first_num = randomIntFromInterval(1, 10);
+				var second_num = randomIntFromInterval(1, 10);
+				answer = first_num + second_num;
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			if (difficulty == 'hard') {
+				var first_num = randomIntFromInterval(1, 20);
+				var second_num = randomIntFromInterval(1, 20);
+				answer = first_num + second_num;
+				while (answer > 20) {
+					first_num = randomIntFromInterval(1, 20);
+					second_num = randomIntFromInterval(1, 20);
+					answer = first_num + second_num;
+				}
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			return {'text': problem, 'operator': operator, 'cPlus': cPlus, 'cTen': cTen};
 		} else {
-			type = 'sub';
+			operator = '-';
+			cMinus = true;
+			if (difficulty == 'easy') {
+				var first_num = randomIntFromInterval(1, 10);
+				var second_num = randomIntFromInterval(1, 10);
+				answer = first_num - second_num;
+				while (answer < 0) {
+					first_num = randomIntFromInterval(1, 10);
+					second_num = randomIntFromInterval(1, 10);
+					answer = first_num - second_num;
+				}
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				if (answer == 0) {
+					cZero = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			if (difficulty == 'medium') {
+				var first_num = randomIntFromInterval(5, 15);
+				var second_num = randomIntFromInterval(1, 10);
+				answer = first_num - second_num;
+				while (answer < 0) {
+					first_num = randomIntFromInterval(5, 15);
+					second_num = randomIntFromInterval(1, 10);
+					answer = first_num - second_num;
+				}
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				if (answer == 0) {
+					cZero = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			if (difficulty == 'hard') {
+				var first_num = randomIntFromInterval(10, 20);
+				var second_num = randomIntFromInterval(5, 20);
+				answer = first_num - second_num;
+				while (answer < 0) {
+					first_num = randomIntFromInterval(10, 20);
+					second_num = randomIntFromInterval(5, 20);
+					answer = first_num - second_num;
+				}
+				if (answer == 0) {
+					cZero = true;
+				}
+				if ((first_num == 10) || (second_num == 10) || (answer == 10)) {
+					cTen = true;
+				}
+				problem = first_num + ' ? ' + second_num + ' = ' + answer;
+			}
+			return {'text': problem, 'operator': operator, 'cMinus': cMinus, 'cTen': cTen, 'cZero': cZero};
 		}
 	}
 	

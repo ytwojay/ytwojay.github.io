@@ -29,6 +29,14 @@ BasicGame.Credits.prototype = {
 			
 			var zizo = this.game.add.sprite(this.game.world.centerX - 35, this.game.world.centerY + 73, 'zizo');
 			zizo.anchor.setTo(0.5, 0);
+			
+			if (this.game.global_vars.showStatsBool == true) {
+				var stat_button = this.game.add.button(this.game.world.centerX, this.game.world.centerY - 70, 'yellow_buttons', this.showStatistics, this, 3, 3, 4);
+				stat_button.anchor.setTo(0.5, 0.5);
+				stat_button_text = this.game.add.text(2, 0, 'Statistics', {font: '25px kenvector_future', fill: '#000', align: 'center'})
+				stat_button_text.anchor.setTo(0.5, 0.5);
+				stat_button.addChild(stat_button_text);
+			}
 		}, this);
 		
 		move.start();
@@ -39,6 +47,11 @@ BasicGame.Credits.prototype = {
 	},
 	
 	update: function() {
+	},
+	
+	showStatistics: function() {
+		this.music.stop();
+		this.game.state.start('Statistics');
 	},
 	
 	backToMainMenu: function() {

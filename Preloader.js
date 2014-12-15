@@ -26,7 +26,8 @@ BasicGame.Preloader.prototype = {
 		this.game.load.image('boss_button_locked', 'assets/main_menu/bossbuttonlocked.png');
 		this.game.load.image('resume_button', 'assets/main_menu/resumebutton.png');
 		this.game.load.image('resume_button_locked', 'assets/main_menu/resumegray.png');
-		this.game.load.image('story_button', 'assets/main_menu/storybutton.png');
+		this.game.load.image('story_button', 'assets/main_menu/start.png');
+		this.game.load.image('credits_button', 'assets/main_menu/credits.png');
 		
 		// Backgrounds
 		this.game.load.image('bg_shroom', 'assets/backgrounds/bg_shroom_lg.png');
@@ -59,6 +60,7 @@ BasicGame.Preloader.prototype = {
 		this.game.load.image('black_screen', 'assets/black.png');
 		this.game.load.image('white_screen', 'assets/white_screen.png');
 		this.game.load.image('q_bg', 'assets/qborder.png');
+		this.game.load.image('q_bg2', 'assets/qborder2.png');
 		
 		// Player sprites
 		this.game.load.atlasXML('zizo', 'assets/aliens/alienGreen.png', 'assets/aliens/alienGreen.xml');
@@ -90,7 +92,10 @@ BasicGame.Preloader.prototype = {
 		this.game.load.audio('racing_get_set', 'assets/racing_game/Get_set.ogg');
 		this.game.load.audio('racing_go', 'assets/racing_game/Go.ogg');
 		
+		// Collect Game Audio
+		
 		// Scroller Game Audio
+		this.game.load.audio('desert_background_music', 'assets/collect_game/desert.ogg');
 		this.game.load.audio('scroller_background_music', 'assets/side_scroller/Decktonic_-_09_-_Night_Drive.ogg');
 		this.game.load.audio('splat_sound', 'assets/common_sounds/87535__flasher21__splat.ogg');
 		

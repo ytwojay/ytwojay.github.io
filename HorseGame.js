@@ -59,7 +59,6 @@ BasicGame.HorseGame = function (game) {
 	
 	this.background_music = null;
 	this.win_sound = null;
-	this.lose_sound = null;
 	this.right_answer_sound = null;
 	this.wrong_answer_sound = null;
 	
@@ -72,9 +71,12 @@ BasicGame.HorseGame = function (game) {
 	// local category booleans
 	this.lcAddition = false;
 	this.lcAddthree = false;
+	this.lcAddmiddle = false;
 	this.lcSubtraction = false;
 	this.lcSubthree = false;
 	this.lcZero = false;
+	this.lcTen = false;
+	this.lastAnswer = 0;
 };
 
 BasicGame.HorseGame.prototype = {
@@ -89,11 +91,10 @@ BasicGame.HorseGame.prototype = {
 	
 	create: function() {
 		console.log('Horse game');
-		
+		this.game.global_vars.showStatsBool = true;
 		// Audio
 		this.background_music = this.game.add.audio('racing_background_music');
 		this.win_sound = this.game.add.audio('win_sound');
-		this.lose_sound = this.game.add.audio('lose_sound');
 		this.right_answer_sound = this.game.add.audio('right_answer_sound');
 		this.wrong_answer_sound = this.game.add.audio('wrong_answer_sound');
 			
@@ -166,7 +167,7 @@ BasicGame.HorseGame.prototype = {
 			this.game.add.tween(this.start_button).to({alpha: 1}, 500, null, true);
 		}, this);
 		// 10/26 commented out during testing
-		//instruction_audio.play();
+		instruction_audio.play();
 	},
 	
 	// Commented out pause functionality
@@ -190,7 +191,7 @@ BasicGame.HorseGame.prototype = {
 		this.game.physics.overlap(this.opponents, this.finish_line, this.loseRace, null, this);
 		
 		// If player has not answered in 6 seconds
-		if (this.started && this.game.time.now - this.player_run_timer > 3000) {
+		if (this.started && this.game.time.now - this.player_run_timer > 5000) {
 			this.slowPlayer();
 		}
 		
@@ -246,7 +247,7 @@ BasicGame.HorseGame.prototype = {
 	
 	startCountDown: function() {
 		//console.log('start count down');
-		//this.background_music.play();
+		this.background_music.play();
 		
 		var this_ref = this;
 		var count_down_text = this.game.add.text(this.game.world.centerX, 150, 'On your mark...', this.text_style);
@@ -255,17 +256,17 @@ BasicGame.HorseGame.prototype = {
 		this.zizo.play('on_mark');
 		this.opponents.callAll('play', null, 'on_mark');
 		
-		var mark = this_ref.game.add.audio('racing_on_ur_mark');
+		var mark = this_ref.game.add.audio('right_answer_sound');
 		mark.onStop.add(function(){
 			count_down_text.setText('Get set...');
 			this.zizo.play('get_set');
 			this.opponents.callAll('play', null, 'get_set');
 			
-			var set = this.game.add.audio('racing_get_set');
+			var set = this.game.add.audio('right_answer_sound');
 			set.onStop.add(function(){
 				count_down_text.setText('GO!!!');	
 				
-				var go = this_ref.game.add.audio('racing_go');
+				var go = this_ref.game.add.audio('right_answer_sound');
 				go.onStop.add(function(){
 					count_down_text.destroy();
 					this.zizo.play('run');
@@ -299,15 +300,37 @@ BasicGame.HorseGame.prototype = {
 	
 	displayNewProblem: function() {
 		
-		var problem = this.game.getMathProblem('subMiddle', this.diff_level);
+		var typeProb = randomIntFromInterval(1, 3);
+		if (typeProb == 1) {
+			var problem = this.game.getMathProblem('addSolution', this.diff_level);
+		} else if (typeProb == 2) {
+			var problem = this.game.getMathProblem('subSolution', this.diff_level);
+		} else {
+			var problem = this.game.getMathProblem('addMiddle', this.diff_level);
+		}
+		//var problem = this.game.getMathProblem('subMiddle', this.diff_level);
 		//var problem = this.game.getMathProblem('addMiddle', 'hard');
+		while (this.lastAnswer == problem.answer) {
+			var typeProb = randomIntFromInterval(1, 3);
+			if (typeProb == 1) {
+				var problem = this.game.getMathProblem('addSolution', this.diff_level);
+			} else if (typeProb == 2) {
+				var problem = this.game.getMathProblem('subSolution', this.diff_level);
+			} else {
+				var problem = this.game.getMathProblem('addMiddle', this.diff_level);
+			}
+		}
 		this.answer = problem.answer;
+		this.lastAnswer = problem.answer;
 		// Once the problem is returned, set local category variables
 		if (problem.cAddition == true) {
 			this.lcAddition = true;
 		}
 		if (problem.cAddthree == true) {
 			this.lcAddthree = true;
+		}
+		if (problem.cAddmiddle == true) {
+			this.lcAddmiddle = true;
 		}
 		if (problem.cSubtraction == true) {
 			this.lcSubtraction = true;
@@ -317,6 +340,9 @@ BasicGame.HorseGame.prototype = {
 		}
 		if (problem.cZero == true) {
 			this.lcZero = true;
+		}
+		if (problem.cTen == true) {
+			this.lcTen = true;
 		}
 		if (this.problem_background == null || !this.problem_background.exists) {
 			this.problem_background = this.game.add.sprite(this.game.world.centerX, 120, 'q_bg');
@@ -342,6 +368,9 @@ BasicGame.HorseGame.prototype = {
 		if (this.lcAddthree == true){
 			this.game.global_vars.askAddthree += 1;
 		}
+		if (this.lcAddmiddle == true){
+			this.game.global_vars.askAddmiddle += 1;
+		}
 		if (this.lcSubtraction == true) {
 			this.game.global_vars.askSubtraction +=1;
 		}
@@ -351,19 +380,28 @@ BasicGame.HorseGame.prototype = {
 		if (this.lcZero == true) {
 			this.game.global_vars.askZero +=1;
 		}
+		if (this.lcTen == true) {
+			this.game.global_vars.askTen +=1;
+		}
 		
 		if (this.answer == answer) {
 			this.right_answer_sound.play();
 			//this.displayNewProblem();
 			this.acceleratePlayer();
-			this.score += 100;
+			//this.score += 100;
 			this.game.global_vars.diff_score += 1;
+			if (this.game.global_vars.diff_score > 15) {
+				this.game.global_vars.diff_score = 15;
+			}
 			// if the correct answer was entered, increment all the ans* category vars and the difficulty vars
 			if (this.lcAddition == true){
 				this.game.global_vars.ansAddition += 1;
 			}
 			if (this.lcAddthree == true){
 				this.game.global_vars.ansAddthree += 1;
+			}
+			if (this.lcAddmiddle == true){
+				this.game.global_vars.ansAddmiddle += 1;
 			}
 			if (this.lcSubtraction == true) {
 				this.game.global_vars.ansSubtraction +=1;
@@ -374,18 +412,24 @@ BasicGame.HorseGame.prototype = {
 			if (this.lcZero == true) {
 				this.game.global_vars.ansZero +=1;
 			}
+			if (this.lcTen == true) {
+				this.game.global_vars.ansTen +=1;
+			}
 			if (this.diff_level == 'easy') {
 				this.game.global_vars.ansEasy +=1;
+				this.score += 75;
 			}
 			if (this.diff_level == 'medium') {
 				this.game.global_vars.ansMedium +=1;
+				this.score += 100;
 			}
 			if (this.diff_level == 'hard') {
 				this.game.global_vars.ansHard +=1;
+				this.score += 150;
 			}
 		} else {
 			this.wrong_answer_sound.play();
-			this.game.global_vars.diff_score -= 1;
+			this.game.global_vars.diff_score -= 2;
 			if (this.game.global_vars.diff_score < 0) {
 				this.game.global_vars.diff_score = 0;
 			}
@@ -399,11 +443,11 @@ BasicGame.HorseGame.prototype = {
 		// reset local category booleans
 		this.lcAddition = false;
 		this.lcAddthree = false;
+		this.lcAddmiddle = false;
 		this.lcSubtraction = false;
 		this.lcSubthree = false;
 		this.lcZero = false;
-		
-		this.displayNewProblem();
+		this.lcTen = false;
 		
 		/*console.log('askSubtraction: ' + this.game.global_vars.askSubtraction + ' Answered: ' + this.game.global_vars.ansSubtraction);
 		console.log('askSubthree: ' + this.game.global_vars.askSubthree + ' Answered: ' + this.game.global_vars.ansSubthree);
@@ -414,7 +458,11 @@ BasicGame.HorseGame.prototype = {
 		
 		console.log('askAddition: ' + this.game.global_vars.askAddition + ' Answered: ' + this.game.global_vars.ansAddition);
 		console.log('askAddthree: ' + this.game.global_vars.askAddthree + ' Answered: ' + this.game.global_vars.ansAddthree);
+		console.log('askAddmiddle: ' + this.game.global_vars.askAddmiddle + ' Answered: ' + this.game.global_vars.ansAddmiddle);
+		console.log('askSubtraction: ' + this.game.global_vars.askSubtraction + ' Answered: ' + this.game.global_vars.ansSubtraction);
+		console.log('askSubthree: ' + this.game.global_vars.askSubthree + ' Answered: ' + this.game.global_vars.ansSubthree);
 		console.log('askZero: ' + this.game.global_vars.askZero + ' Answered: ' + this.game.global_vars.ansZero);
+		console.log('askTen: ' + this.game.global_vars.askTen + ' Answered: ' + this.game.global_vars.ansTen);
 		console.log('ansEasy: ' + this.game.global_vars.ansEasy);
 		console.log('ansMedium: ' + this.game.global_vars.ansMedium);
 		console.log('ansHard: ' + this.game.global_vars.ansHard);
@@ -431,13 +479,24 @@ BasicGame.HorseGame.prototype = {
 		this.difficulty_text.destroy();
 		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score + ' ' + this.diff_level, {font: '20px kenvector_future', fill: '#fff'});
 		this.score_text.setText(this.score);
+		
+		this.displayNewProblem();
 	},
 	
 	acceleratePlayer: function() {
 		if (this.started) {
 			//console.log('accelerate');
 			if (this.zizo.body.velocity.x < this.max_player_speed) {
-				this.zizo.body.velocity.x += 6;
+				//this.zizo.body.velocity.x += 6;
+				if (this.diff_level == 'easy') {
+					this.zizo.body.velocity.x += 6;
+				}
+				if (this.diff_level == 'medium') {
+					this.zizo.body.velocity.x += 7;
+				}
+				if (this.diff_level == 'hard') {
+					this.zizo.body.velocity.x += 8;
+				}
 			}
 			this.player_run_timer = this.game.time.now;
 		}
@@ -463,11 +522,11 @@ BasicGame.HorseGame.prototype = {
 		if (this.finishplace == 4) {
 			this.score += 50;
 		} else if (this.finishplace == 3) {
-			this.score += 150;
+			this.score += 250;
 		} else if (this.finishplace == 2) {	
-			this.score += 300;
+			this.score += 400;
 		} else {
-			this.score += 500;
+			this.score += 650;
 		}
 		
 		this.endRace();
@@ -483,7 +542,6 @@ BasicGame.HorseGame.prototype = {
 		this.finished = true;
 		
 		this.endRace();
-		this.lose_sound.play();
 		this.showScoreboard(false);*/
 		this.finishplace += 1;
 		//console.log(this.finishplace);

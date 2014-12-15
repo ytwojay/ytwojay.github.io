@@ -1,5 +1,4 @@
-CSU Fullerton
-CPSC 462 Project -- Spring 2014
-Math Geeks
-
-First grade math game!
+Jonathon Son
+CS Final Project Fall 2014
+CSUF
+"Zizo and the Math Monsters"

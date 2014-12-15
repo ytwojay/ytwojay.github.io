@@ -63,6 +63,15 @@ BasicGame.SideScrollerGame = function (game) {
 	
 	this.already_dead = false;
 	this.finished_level = false;
+	
+	// local categories
+	this.lcZero = false;
+	this.lcTen = false;
+	this.lcLess = false;
+	this.lcGreater = false;
+	this.lcPlus = false;
+	this.lcMinus = false;
+	this.lastAnswer = 0;
 };
 
 BasicGame.SideScrollerGame.prototype = {
@@ -99,7 +108,7 @@ BasicGame.SideScrollerGame.prototype = {
 		this.answer_button_group.fixedToCamera = true;
 		
 		// Create answer buttons
-		var plus_button = this.game.add.button(390, 300, 'buttons', this.answerPlus, this, 20, 20, 20);
+		var plus_button = this.game.add.button(385, 300, 'buttons', this.answerPlus, this, 20, 20, 20);
 		var plus_button_text = this.game.add.text(50, 50, '+', {font: '40px kenvector_future', fill: '#fff', align: 'center'});
 		plus_button_text.anchor.setTo(0.5, 0.5);
 		plus_button.addChild(plus_button_text);
@@ -115,7 +124,7 @@ BasicGame.SideScrollerGame.prototype = {
 		minus_button.value = '-';
 		this.answer_button_group.add(minus_button);
 		
-		var greater_button = this.game.add.button(680, 300, 'buttons', this.answerGreater, this, 20, 20, 20);
+		var greater_button = this.game.add.button(795, 300, 'buttons', this.answerGreater, this, 20, 20, 20);
 		var greater_button_text = this.game.add.text(50, 50, '>', {font: '40px arial', fill: '#fff', align: 'center'});
 		greater_button_text.anchor.setTo(0.5, 0.5);
 		greater_button.addChild(greater_button_text);
@@ -123,7 +132,7 @@ BasicGame.SideScrollerGame.prototype = {
 		greater_button.value = '>';
 		this.answer_button_group.add(greater_button);
 		
-		var less_button = this.game.add.button(790, 300, 'buttons', this.answerLess, this, 20, 20, 20);
+		var less_button = this.game.add.button(680, 300, 'buttons', this.answerLess, this, 20, 20, 20);
 		var less_button_text = this.game.add.text(50, 50, '<', {font: '40px arial', fill: '#fff', align: 'center'});
 		less_button_text.anchor.setTo(0.5, 0.5);
 		less_button.addChild(less_button_text);
@@ -135,9 +144,9 @@ BasicGame.SideScrollerGame.prototype = {
 		this.ui_layer = this.game.add.group();
 		this.ui_layer.z = 2;
 		
-		this.pause_button = this.game.add.button(this.game.world.width - 135, 20, 'pause_icon', this.game.pause, this);
+		/*this.pause_button = this.game.add.button(this.game.world.width - 135, 20, 'pause_icon', this.game.pause, this);
 		this.pause_button.fixedToCamera = true;
-		this.ui_layer.add(this.pause_button);
+		this.ui_layer.add(this.pause_button);*/
 		
 		// Score display
 		this.score_text = this.game.add.text(this.game.width - 145, 9, this.score + '', this.text_style);
@@ -172,7 +181,7 @@ BasicGame.SideScrollerGame.prototype = {
 		this.enemy_snakes = this.game.add.group();
 		
 		var current_position = 800;
-		for (var i = 0; i < 15; i++) {
+		for (var i = 0; i < 14; i++) {
 			var random_enemy = randomIntFromInterval(1, 4);
 			if (random_enemy == 1) {
 				this.createEnemySpider(current_position);
@@ -184,7 +193,7 @@ BasicGame.SideScrollerGame.prototype = {
 				this.createEnemyGhost(current_position);
 			}
 			
-			current_position += 400;
+			current_position += 500;
 		}
 		this.enemies = this.game.add.group();
 		this.enemies.add(this.enemy_spiders);
@@ -320,7 +329,7 @@ BasicGame.SideScrollerGame.prototype = {
 		this.displayNewProblem();
 		
 		//this.zizo.body.velocity.x = 200;
-		this.zizo.body.velocity.x = 150;
+		this.zizo.body.velocity.x = 95;
 		// this.zizo.body.velocity.x = 1000;
 	},
 	
@@ -335,11 +344,38 @@ BasicGame.SideScrollerGame.prototype = {
 	},
 	
 	displayNewProblem: function() {
-		//var problem = this.game.getMathProblem('mix', this.diff_level);
-		var problem = this.game.getMathProblem('greaterLess', this.diff_level);
-		//var problem_text = problem.first_num + ' ? ' + problem.second_num + ' = ' + problem.answer;
+		
+		var typeProb = randomIntFromInterval(1, 2);
+		if (typeProb == 1) {
+			var problem = this.game.getMathProblem('greaterLess', this.diff_level);
+			//var problem = this.game.getMathProblem('mix', this.diff_level);
+		} else {
+			var problem = this.game.getMathProblem('mix', this.diff_level);
+			//var problem = this.game.getMathProblem('greaterLess', this.diff_level);
+		}
+		
+		//var problem = this.game.getMathProblem('greaterLess', this.diff_level);
 		var problem_text = problem.text;
 		this.answer = problem.operator;
+		
+		if (problem.cGreater == true) {
+			this.lcGreater = true;
+		}
+		if (problem.cLess == true) {
+			this.lcLess = true;
+		}
+		if (problem.cZero == true) {
+			this.lcZero = true;
+		}
+		if (problem.cTen == true) {
+			this.lcTen = true;
+		}
+		if (problem.cPlus == true) {
+			this.lcPlus = true;
+		}
+		if (problem.cMinus == true) {
+			this.lcMinus = true;
+		}
 		
 		if (this.problem_background == null || !this.problem_background.exists) {
 			this.problem_background = this.game.add.sprite(640, 120, 'q_bg');
@@ -374,15 +410,67 @@ BasicGame.SideScrollerGame.prototype = {
 	},
 	
 	checkAnswer: function(answer) {
+		if (this.lcGreater == true){
+			this.game.global_vars.askGreater += 1;
+		}
+		if (this.lcLess == true){
+			this.game.global_vars.askLess += 1;
+		}
+		if (this.lcTen == true){
+			this.game.global_vars.askTen += 1;
+		}
+		if (this.lcZero == true){
+			this.game.global_vars.askZero += 1;
+		}
+		if (this.lcPlus == true){
+			this.game.global_vars.askPlus += 1;
+		}
+		if (this.lcMinus == true){
+			this.game.global_vars.askMinus += 1;
+		}
+		//console.log('Checking answer ' + this.answer + ' with ' + answer);
 		if (this.answer == answer) {
 			this.right_answer_sound.play();
 			this.openUmbrella();
-			this.score += 100;
+			//this.score += 100;
 			this.game.global_vars.diff_score += 1;
+			if (this.game.global_vars.diff_score > 15) {
+				this.game.global_vars.diff_score = 15;
+			}
+			if (this.lcGreater == true){
+				this.game.global_vars.ansGreater += 1;
+			}
+			if (this.lcLess == true){
+				this.game.global_vars.ansLess += 1;
+			}
+			if (this.lcTen == true){
+				this.game.global_vars.ansTen += 1;
+			}
+			if (this.lcZero == true){
+				this.game.global_vars.ansZero += 1;
+			}
+			if (this.lcPlus == true){
+				this.game.global_vars.ansPlus += 1;
+			}
+			if (this.lcMinus == true){
+				this.game.global_vars.ansMinus += 1;
+			}
+			if (this.diff_level == 'easy') {
+				this.game.global_vars.ansEasy += 1;
+				this.score += 75;
+			}
+			if (this.diff_level == 'medium') {
+				this.game.global_vars.ansMedium += 1;
+				this.score += 100;
+			}
+			if (this.diff_level == 'hard') {
+				this.game.global_vars.ansHard += 1;
+				this.score += 150;
+			}
 		} else {
 			this.closeUmbrella();
 			this.wrong_answer_sound.play();
-			this.game.global_vars.diff_score -= 1;
+			this.game.global_vars.diff_score -= 2;
 			if (this.game.global_vars.diff_score < 0) {
 				this.game.global_vars.diff_score = 0;
 			}
@@ -392,8 +480,28 @@ BasicGame.SideScrollerGame.prototype = {
 			}
 		}
 		
-		this.displayNewProblem();
-		this.score_text.setText(this.score);
+		console.log('askGreater: ' + this.game.global_vars.askGreater + ' Answered: ' + this.game.global_vars.ansGreater);
+		console.log('askLess: ' + this.game.global_vars.askLess + ' Answered: ' + this.game.global_vars.ansLess);
+		console.log('askPlus: ' + this.game.global_vars.askPlus + ' Answered: ' + this.game.global_vars.ansPlus);
+		console.log('askMinus: ' + this.game.global_vars.askMinus + ' Answered: ' + this.game.global_vars.ansMinus);
+		/*console.log('askSubmiddle: ' + this.game.global_vars.askSubmiddle + ' Answered: ' + this.game.global_vars.ansSubmiddle);
+		console.log('askSubtraction: ' + this.game.global_vars.askSubtraction + ' Answered: ' + this.game.global_vars.ansSubtraction);
+		console.log('askSubthree: ' + this.game.global_vars.askSubthree + ' Answered: ' + this.game.global_vars.ansSubthree);*/
+		console.log('askZero: ' + this.game.global_vars.askZero + ' Answered: ' + this.game.global_vars.ansZero);
+		console.log('askTen: ' + this.game.global_vars.askTen + ' Answered: ' + this.game.global_vars.ansTen);
+		console.log('ansEasy: ' + this.game.global_vars.ansEasy);
+		console.log('ansMedium: ' + this.game.global_vars.ansMedium);
+		console.log('ansHard: ' + this.game.global_vars.ansHard);
+		
+		// reset local category booleans
+		this.lcGreater = false;
+		this.lcLess = false;
+		this.lcZero = false;
+		this.lcTen = false;
+		this.lcPlus = false;
+		this.lcMinus = false;
+		
+		// update current difficulty
 		if (this.game.global_vars.diff_score < 5) {
 			this.diff_level = 'easy';
 		}
@@ -406,6 +514,8 @@ BasicGame.SideScrollerGame.prototype = {
 		this.difficulty_text.destroy();
 		this.difficulty_text = this.game.add.text(80, 10, 'Difficulty ' + this.game.global_vars.diff_score + ' ' + this.diff_level, {font: '20px kenvector_future', fill: '#fff'});
 		this.difficulty_text.fixedToCamera = true;
+		this.displayNewProblem();
+		this.score_text.setText(this.score);
 	},
 	
 	openUmbrella: function() {
@@ -442,12 +552,14 @@ BasicGame.SideScrollerGame.prototype = {
 				// this.showScoreboard(false);
 			// } else {
 				this.ouch_sound.play();
-				this.score -= 50;
+				this.checkAnswer('0');
+				/*this.score -= 50;
 				if (this.score < 0) {
 					this.score = 0;
 				}
 				this.wrong_answer_sound.play();
-				this.displayNewProblem();
+				this.displayNewProblem();*/
+				
 				this.score_text.setText(this.score);
 			// }
 		}
@@ -457,7 +569,7 @@ BasicGame.SideScrollerGame.prototype = {
 		if (this.finished_level) {	
 			return;
 		}
-		
+		//this.answer_button_group.destroy();
 		this.finished_level = true;
 		this.background_music.stop();
 		this.win_sound.play();
