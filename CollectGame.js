@@ -42,6 +42,7 @@ BasicGame.CollectGame = function (game) {
 	this.lcZero = false;
 	this.lcTen = false;
 	this.lastAnswer = 0;
+	this.diff_level = '';
 };
 
 BasicGame.CollectGame.prototype = {
@@ -190,9 +191,9 @@ BasicGame.CollectGame.prototype = {
 		}
 		boulder.anchor.setTo(0,0);
 		// 1 in 4 change of generating the right answer
-		boulderrnd = this.game.rnd.integerInRange(1, 5);
+		boulderrnd = this.game.rnd.integerInRange(1, 6);
 		//console.log('boulderrnd' + boulderrnd);
-		if ((boulderrnd == 2) || (boulderrnd == 5)) {
+		if (boulderrnd < 4) {
 			boulderVal = this.answer;
 		}
 		else {

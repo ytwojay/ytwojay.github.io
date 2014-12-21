@@ -160,7 +160,7 @@ BasicGame.Statistics.prototype = {
 		displayText += 1;
 		if (displayText == 2) {
 			this.scoreboard.add(this.game.add.sprite(0, 0, 'score_board'));
-			var text = this.game.add.text(this.game.world.centerX, 250, result2, this.text_style);
+			var text = this.game.add.text(this.game.world.centerX, 240, result2, this.text_style);
 			text.anchor.setTo(0.5, 0);
 			next_button = this.game.add.button(this.game.world.centerX, this.game.world.height - 100, 'yellow_buttons', this.nextScreen, this, 3, 3, 4);
 			next_button.anchor.setTo(0.5, 0.5);
@@ -169,7 +169,7 @@ BasicGame.Statistics.prototype = {
 			next_button.addChild(next_text);
 		} else if (displayText == 3) {
 			this.game.add.sprite(0, 0, 'score_board');
-			var text = this.game.add.text(this.game.world.centerX, 250, result3, this.text_style);
+			var text = this.game.add.text(this.game.world.centerX, 240, result3, this.text_style);
 			text.anchor.setTo(0.5, 0);
 			next_button = this.game.add.button(this.game.world.centerX, this.game.world.height - 100, 'yellow_buttons', this.backToMainMenu, this, 3, 3, 4);
 			next_button.anchor.setTo(0.5, 0.5);
