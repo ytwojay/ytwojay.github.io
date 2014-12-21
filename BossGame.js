@@ -139,6 +139,12 @@ BasicGame.BossGame.prototype = {
 		
 		// Initialize scoreboard
 		this.scoreboard = this.game.add.group();
+		if (this.game.global_vars.diff_score < 5) {
+			this.diff_level = 'easy';
+		}
+		else {
+			this.diff_level = 'medium';
+		}
 		
 		var instruction_audio = this.game.add.audio('boss_instruction_sound');
 		instruction_audio.onStop.add(function(){
